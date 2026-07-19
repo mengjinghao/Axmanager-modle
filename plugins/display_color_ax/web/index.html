@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<title>屏幕色彩亮度</title>
+<style>:root{--p:#f59e0b;--s:#1e1e2e;--sv:#2a2a3e;--os:#e8e6f0;--osv:#9b99ad;--ol:#3d3d55;--er:#f87171;--su:#4ade80;--wa:#fbbf24;--r:16px;--inset-b:env(safe-area-inset-bottom,0px);--inset-t:env(safe-area-inset-top,0px)}*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{font-family:-apple-system,system-ui,sans-serif;background:#111118;color:var(--os);padding:0 0 calc(80px+var(--inset-b)) 0;min-height:100vh}.header{padding:calc(20px+var(--inset-t)) 20px 16px;background:linear-gradient(135deg,var(--p)18 0%,transparent 70%)}.header h1{font-size:22px;font-weight:700;color:var(--p)}.header .sub{font-size:13px;color:var(--osv);margin-top:4px}.warn{margin:12px 16px;padding:12px;border-radius:12px;background:#1e1810;border-left:3px solid var(--wa);font-size:12px;color:#b0a070;line-height:1.5}.card{background:var(--s);border:1px solid var(--ol);border-radius:var(--r);padding:16px;margin:8px 16px}.card-title{font-size:14px;font-weight:600;margin-bottom:4px}.card-desc{font-size:12px;color:var(--osv);line-height:1.5}.mode-btn{display:flex;align-items:center;gap:10px;width:calc(100%-32px);margin:8px 16px;padding:14px 16px;border:none;border-radius:var(--r);font-size:14px;font-weight:600;cursor:pointer;text-align:left;background:var(--s);color:var(--os);border:1px solid var(--ol);transition:all .2s}.mode-btn:active{transform:scale(.98);opacity:.8}.mode-btn .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}.btn-reset{display:block;width:calc(100%-32px);margin:8px 16px;padding:14px;border:none;border-radius:var(--r);font-size:15px;font-weight:600;cursor:pointer;background:var(--er);color:#fff}.btn-reset:active{transform:scale(.97)}.status{margin:8px 16px;padding:12px;border-radius:12px;background:var(--sv);font-size:13px;color:var(--osv);display:none}.status.show{display:block}.status.ok{color:var(--su)}.status.err{color:var(--er)}</style>
+</head>
+<body>
+<div class="header"><h1>屏幕色彩亮度</h1><div class="sub">色域 · 饱和度 · 背光 · HDR · 峰值亮度 三档切换</div></div>
+<div class="warn"><strong>&#9888; 重要提醒：</strong>仅表层显示属性修改，不替换硬件驱动。重启后全部失效需重新切换。OLED / LCD 通用适配。</div>
+<div class="card"><div class="card-title">&#9679; 参数速览</div><div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px"><span style="padding:3px 8px;border-radius:99px;font-size:11px;background:var(--sv);color:var(--p)">色彩饱和度</span><span style="padding:3px 8px;border-radius:99px;font-size:11px;background:var(--sv);color:var(--p)">色域模式</span><span style="padding:3px 8px;border-radius:99px;font-size:11px;background:var(--sv);color:var(--p)">背光曲线</span><span style="padding:3px 8px;border-radius:99px;font-size:11px;background:var(--sv);color:var(--p)">自动亮度</span><span style="padding:3px 8px;border-radius:99px;font-size:11px;background:var(--sv);color:var(--p)">HDR优化</span><span style="padding:3px 8px;border-radius:99px;font-size:11px;background:var(--sv);color:var(--p)">峰值亮度</span></div></div>
+
+<button class="mode-btn" data-mode="standard" onclick="applyMode(this)"><span class="dot" style="background:#60a5fa"></span>标准原色 — sRGB · 6500K · 500nit峰值 · 标准背光</button>
+<button class="mode-btn" data-mode="vivid" onclick="applyMode(this)"><span class="dot" style="background:#f87171"></span>鲜艳广色域 — DCI-P3 · 饱和+30% · 700nit · HDR</button>
+<button class="mode-btn" data-mode="eye_care" onclick="applyMode(this)"><span class="dot" style="background:#4ade80"></span>护眼低亮度 — 4500K暖色 · 350nit · 最低5亮度 · 夜晚模式</button>
+
+<button class="btn-reset" onclick="resetAll()">一键恢复原厂显示参数</button>
+<div class="status" id="status"></div>
+
+<script>
+const MODDIR = '/data/user_de/0/com.android.shell/axeron/plugins/display_color_ax';
+function applyMode(btn){const m=btn.dataset.mode;const n={standard:'标准原色',vivid:'鲜艳广色域',eye_care:'护眼低亮度'};const s=document.getElementById('status');s.className='status show';s.textContent='正在切换到 '+n[m]+'...';execCmd('sh '+MODDIR+'/install.sh '+m).then(function(o){s.textContent=o||n[m]+' 已生效';s.className='status show ok'}).catch(function(e){s.textContent='失败：'+e.message;s.className='status show err'})}
+function resetAll(){const s=document.getElementById('status');s.className='status show';s.textContent='正在恢复...';execCmd('sh '+MODDIR+'/uninstall.sh').then(function(o){s.textContent=o||'已恢复默认';s.className='status show ok'}).catch(function(e){s.textContent='失败：'+e.message;s.className='status show err'})}
+function execCmd(cmd){return new Promise(function(res,rej){try{if(typeof ksu!=='undefined'&&typeof ksu.exec==='function')res(String(ksu.exec(cmd)).trim());else if(typeof kernelsu!=='undefined'&&typeof kernelsu.exec==='function')kernelsu.exec(cmd).then(function(r){res((r.stdout||r.stderr||'完成').trim())}).catch(rej);else if(typeof Axeron!=='undefined'&&typeof Axeron.exec==='function'){var j=Axeron.exec(cmd,null);res(j?JSON.parse(j).out||'完成':'完成')}else rej(new Error('请在AXManager中打开'))}catch(e){rej(e)}})}
+</script>
+</body>
+</html>

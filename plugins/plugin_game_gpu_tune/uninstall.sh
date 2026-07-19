@@ -11,6 +11,8 @@ settings delete system min_refresh_rate 2>/dev/null
 settings delete system screen_off_refresh_rate 2>/dev/null
 settings delete system dynamic_resolution_switch 2>/dev/null
 settings delete system touch_sensitivity_mode 2>/dev/null
+settings delete system pointer_speed 2>/dev/null
+settings delete system screen_brightness_mode 2>/dev/null
 settings delete system game_mode_performance 2>/dev/null
 settings delete global game_driver_preference 2>/dev/null
 

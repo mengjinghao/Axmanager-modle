@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<title>游戏辅助工具箱</title>
+<style>:root{--p:#fb923c;--s:#1e1e2e;--sv:#2a2a3e;--os:#e8e6f0;--osv:#9b99ad;--ol:#3d3d55;--er:#f87171;--su:#4ade80;--wa:#fbbf24;--r:16px;--inset-b:env(safe-area-inset-bottom,0px);--inset-t:env(safe-area-inset-top,0px)}*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}body{font-family:-apple-system,system-ui,sans-serif;background:#111118;color:var(--os);padding:0 0 calc(80px+var(--inset-b)) 0;min-height:100vh}.header{padding:calc(20px+var(--inset-t)) 20px 16px;background:linear-gradient(135deg,var(--p)18 0%,transparent 70%)}.header h1{font-size:22px;font-weight:700;color:var(--p)}.header .sub{font-size:13px;color:var(--osv);margin-top:4px}.warn{margin:12px 16px;padding:12px;border-radius:12px;background:#1e1510;border-left:3px solid var(--wa);font-size:12px;color:#b0a070;line-height:1.5}.card{background:var(--s);border:1px solid var(--ol);border-radius:var(--r);padding:16px;margin:8px 16px}.card-title{font-size:14px;font-weight:600;margin-bottom:4px}.card-desc{font-size:12px;color:var(--osv);line-height:1.5}.mode-btn{display:flex;align-items:center;gap:10px;width:calc(100%-32px);margin:8px 16px;padding:14px 16px;border:none;border-radius:var(--r);font-size:14px;font-weight:600;cursor:pointer;text-align:left;background:var(--s);color:var(--os);border:1px solid var(--ol);transition:all .2s}.mode-btn:active{transform:scale(.98);opacity:.8}.mode-btn .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}.btn-reset{display:block;width:calc(100%-32px);margin:8px 16px;padding:14px;border:none;border-radius:var(--r);font-size:15px;font-weight:600;cursor:pointer;background:var(--er);color:#fff}.btn-reset:active{transform:scale(.97)}.status{margin:8px 16px;padding:12px;border-radius:12px;background:var(--sv);font-size:13px;color:var(--osv);display:none}.status.show{display:block}.status.ok{color:var(--su)}.status.err{color:var(--er)}</style>
+</head>
+<body>
+<div class="header"><h1>游戏辅助工具箱</h1><div class="sub">GPU帧率 · 温控 · 后台冻结 · 触控 · 动态分辨率</div></div>
+<div class="warn"><strong>&#9888; 重要提醒：</strong>ADB表层临时修改，重启后全部失效需重新切换。白名单保护王者/和平/原神/星穹铁道等主流手游。</div>
+<div class="card"><div class="card-title">&#9679; 整合功能</div><div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px"><span style="padding:3px 8px;border-radius:99px;font-size:11px;background:var(--sv);color:var(--p)">GPU帧率调度</span><span style="padding:3px 8px;border-radius:99px;font-size:11px;background:var(--sv);color:var(--p)">温控阈值</span><span style="padding:3px 8px;border-radius:99px;font-size:11px;background:var(--sv);color:var(--p)">后台冻结</span><span style="padding:3px 8px;border-radius:99px;font-size:11px;background:var(--sv);color:var(--p)">触控采样</span><span style="padding:3px 8px;border-radius:99px;font-size:11px;background:var(--sv);color:var(--p)">动态分辨率</span></div></div>
+
+<button class="mode-btn" data-mode="extreme" onclick="applyMode(this)"><span class="dot" style="background:#f87171"></span>极致性能 — GPU全速 · 144fps · 48°C · 不冻结后台</button>
+<button class="mode-btn" data-mode="balanced" onclick="applyMode(this)"><span class="dot" style="background:#fbbf24"></span>均衡游戏 — GPU适中 · 90fps · 45°C · 轻度后台限制</button>
+<button class="mode-btn" data-mode="power" onclick="applyMode(this)"><span class="dot" style="background:#60a5fa"></span>轻度省电 — GPU降频 · 60fps · 42°C · 中等后台限制</button>
+<button class="mode-btn" data-mode="silent" onclick="applyMode(this)"><span class="dot" style="background:#4ade80"></span>温控静音 — GPU最低 · 30fps · 38°C · 适合挂机</button>
+
+<div class="card" style="margin-top:8px"><div class="card-title">&#128481; 白名单游戏</div><div class="card-desc">王者荣耀 / 和平精英 / 原神 / 星穹铁道 / 穿越火线 自动保持后台，不受冻结限制。</div></div>
+
+<button class="btn-reset" onclick="resetAll()">一键重置整机游戏参数</button>
+<div class="status" id="status"></div>
+
+<script>
+const MODDIR = '/data/user_de/0/com.android.shell/axeron/plugins/game_toolbox_ax';
+function applyMode(btn){const m=btn.dataset.mode;const n={extreme:'极致性能',balanced:'均衡游戏',power:'轻度省电',silent:'温控静音'};const s=document.getElementById('status');s.className='status show';s.textContent='正在切换到 '+n[m]+'...';execCmd('sh '+MODDIR+'/install.sh '+m).then(function(o){s.textContent=o||n[m]+' 已生效';s.className='status show ok'}).catch(function(e){s.textContent='失败：'+e.message;s.className='status show err'})}
+function resetAll(){const s=document.getElementById('status');s.className='status show';s.textContent='正在恢复...';execCmd('sh '+MODDIR+'/uninstall.sh').then(function(o){s.textContent=o||'已恢复默认';s.className='status show ok'}).catch(function(e){s.textContent='失败：'+e.message;s.className='status show err'})}
+function execCmd(cmd){return new Promise(function(res,rej){try{if(typeof ksu!=='undefined'&&typeof ksu.exec==='function')res(String(ksu.exec(cmd)).trim());else if(typeof kernelsu!=='undefined'&&typeof kernelsu.exec==='function')kernelsu.exec(cmd).then(function(r){res((r.stdout||r.stderr||'完成').trim())}).catch(rej);else if(typeof Axeron!=='undefined'&&typeof Axeron.exec==='function'){var j=Axeron.exec(cmd,null);res(j?JSON.parse(j).out||'完成':'完成')}else rej(new Error('请在AXManager中打开'))}catch(e){rej(e)}})}
+</script>
+</body>
+</html>
