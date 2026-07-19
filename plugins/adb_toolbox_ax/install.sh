@@ -53,5 +53,6 @@ freeze_background)
     ;;
 *)
     echo "用法: install.sh [screenshot|screenrecord_start|screenrecord_stop|dpi_380|dpi_440|dpi_480|restart_ui|clear_cache|freeze_background]"
+    exit 1
     ;;
 esac

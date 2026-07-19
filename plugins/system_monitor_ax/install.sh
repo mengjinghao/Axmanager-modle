@@ -52,5 +52,6 @@ restart_ui)
     ;;
 *)
     echo "用法: install.sh [cpu|mem|battery|network|all|screenshot|clear_cache|restart_ui]"
+    exit 1
     ;;
 esac
